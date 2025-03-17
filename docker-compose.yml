@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:14
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: db_event
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/db_event
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATASOURCE_DDL_AUTO: update
+    ports:
+      - "5432:5432"
+    networks:
+      - nlw-network
+    # volumes:
+    #   - ./db_event.sql:/docker-entrypoint-initdb.d/db_event.sql
+    #   - ./postgres-data:/var/lib/postgresql/data
+
+networks:
+  nlw-network:
+    driver: bridge
