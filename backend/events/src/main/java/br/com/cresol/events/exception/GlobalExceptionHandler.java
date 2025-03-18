@@ -57,8 +57,8 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.badRequest().body(errors);
 	}
 	
-	@ExceptionHandler(HttpMessageNotReadableException.class)
-	public ResponseEntity<Map<String, Object>> handleMissingRequestBody(HttpMessageNotReadableException ex){
+	@ExceptionHandler({HttpMessageNotReadableException.class, InstituicaoUsedException.class})
+	public ResponseEntity<Map<String, Object>> handleMissingRequestBody(RuntimeException ex){
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 			.body(createErrorResponse(
 				HttpStatus.BAD_REQUEST,

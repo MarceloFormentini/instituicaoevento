@@ -48,7 +48,7 @@ public class EventoService {
 		
 		Evento salvo = eventoRepository.save(newEvento);
 		
-		eventoProducer.enviarEventoParaKafka(salvo);
+//		eventoProducer.enviarEventoParaKafka(salvo);
 		
 		return salvo;
 	}

@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import br.com.cresol.events.exception.InstituicaoConflictException;
 import br.com.cresol.events.exception.InstituicaoNotFoundException;
+import br.com.cresol.events.exception.InstituicaoUsedException;
 import br.com.cresol.events.model.Instituicao;
+import br.com.cresol.events.repository.EventoRepository;
 import br.com.cresol.events.repository.InstituicaoRepository;
 
 @Service
@@ -15,6 +17,9 @@ public class InstituicaoService {
 
 	@Autowired
 	private InstituicaoRepository instituicaoRepository;
+	
+	@Autowired
+	private EventoRepository eventoRepository;
 
 	public Instituicao addNewInstituicao(Instituicao novaInstituicao) {
 
@@ -63,11 +68,17 @@ public class InstituicaoService {
 	}
 
 	public boolean removeInstituicao(Integer id) {
+		Instituicao instituicao = instituicaoRepository.findById(id)
+				.orElseThrow(() -> new InstituicaoNotFoundException("Não existe instituição cadastrada com o código " + id));
 		
-		return instituicaoRepository.findById(id).map(instituicao -> {
-            instituicaoRepository.delete(instituicao);
-            return true;
-        }).orElseThrow(() -> new InstituicaoNotFoundException("Não existe instituição cadastrada com o código " + id));
+		eventoRepository.findByInstituicaoId(instituicao).ifPresent(evento -> {
+			throw new InstituicaoUsedException(
+				"Instituição " + instituicao.getNome() + " - " + instituicao.getTipo() + " já cadastrada."
+			);
+		});
+		
+		instituicaoRepository.delete(instituicao);
+		return true;
 	}
 
 }
