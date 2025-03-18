@@ -16,7 +16,7 @@ public class Instituicao {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
-	private Integer institution_id;
+	private Integer id;
 
 	@NotBlank(message="O nome não pode estar vazio")
 	@Size(min=3, message="O nome deve ter no mínimo 3 caracteres")
@@ -28,12 +28,12 @@ public class Instituicao {
 	@Column(name="tipo", length=255, nullable=false)
 	private String tipo;
 
-	public Integer getInstitution_id() {
-		return institution_id;
+	public Integer getId() {
+		return id;
 	}
 
-	public void setInstitution_id(Integer institution_id) {
-		this.institution_id = institution_id;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getNome() {

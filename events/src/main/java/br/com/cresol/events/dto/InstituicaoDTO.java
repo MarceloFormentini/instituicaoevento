@@ -1,5 +1,5 @@
 package br.com.cresol.events.dto;
 
-public record InstituicaoDTO(String nome, String tipo) {
+public record InstituicaoDTO(Integer id, String nome, String tipo) {
 
 }

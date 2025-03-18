@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +29,7 @@ public class InstituicaoController {
 
 		return ResponseEntity.ok(
 			new InstituicaoDTO(
+				instuicaoSalva.getId(),
 				instuicaoSalva.getNome(),
 				instuicaoSalva.getTipo()
 			)
@@ -35,11 +38,28 @@ public class InstituicaoController {
 	
 	@GetMapping("/instituicao")
 	public ResponseEntity<?> getAllInstituicao(){
-		return service.getAllInstituicao();
+		List<Instituicao> listaInstituicoes = service.getAllInstituicao();
+	    List<InstituicaoDTO> listaDTO = listaInstituicoes.stream()
+	        .map(instituicao -> new InstituicaoDTO(
+	        	instituicao.getId(),
+	            instituicao.getNome(),
+	            instituicao.getTipo()
+	        ))
+	        .toList();
+	    return ResponseEntity.ok(listaDTO);
 	}
 	
 	@GetMapping("/instituicao/{id}")
 	public ResponseEntity<?> getInstituicao(@PathVariable Integer id){
-		return service.getInstituicao(id);
+		Instituicao instituicao = service.getInstituicao(id);
+
+		return ResponseEntity.ok(
+				new InstituicaoDTO(
+					instituicao.getId(),
+					instituicao.getNome(),
+					instituicao.getTipo()
+				)
+			);
 	}
+	
 }

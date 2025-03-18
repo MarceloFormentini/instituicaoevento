@@ -22,9 +22,16 @@ public class GlobalExceptionHandler {
 
 	// validação para instituição que já existe - valida nome e tipo
 	@ExceptionHandler(InstituicaoConflictException.class)
-	public ResponseEntity<Map<String, Object>> handleEventConflict(InstituicaoConflictException ex){
+	public ResponseEntity<Map<String, Object>> handleInstituicaoConflict(InstituicaoConflictException ex){
 		return ResponseEntity.status(HttpStatus.CONFLICT)
 				.body(createErrorResponse(HttpStatus.CONFLICT, ex.getMessage()));
+	}
+	
+	// validação para instituicao não encontrada
+	@ExceptionHandler(InstituicaoNotFoundException.class)
+	public ResponseEntity<Map<String, Object>> handleInstituicaoNotFound(InstituicaoNotFoundException ex){
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(createErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage()));
 	}
 
 	// tratamento para exceções inesperadas
