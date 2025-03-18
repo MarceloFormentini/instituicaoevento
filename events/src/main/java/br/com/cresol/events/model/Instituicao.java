@@ -28,6 +28,15 @@ public class Instituicao {
 	@Column(name="tipo", length=255, nullable=false)
 	private String tipo;
 
+	public Instituicao() {
+	}
+
+	public Instituicao(Integer id, String nome, String tipo) {
+		this.id = id;
+		this.nome = nome;
+		this.tipo = tipo;
+	}
+
 	public Integer getId() {
 		return id;
 	}
