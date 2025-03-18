@@ -10,6 +10,7 @@ import br.com.cresol.events.exception.EventoDataIncorretaException;
 import br.com.cresol.events.exception.EventoInstituicaoIncompativelException;
 import br.com.cresol.events.exception.EventoNotFoundException;
 import br.com.cresol.events.exception.InstituicaoNotFoundException;
+import br.com.cresol.events.messaging.EventoProducer;
 import br.com.cresol.events.model.Evento;
 import br.com.cresol.events.model.Instituicao;
 import br.com.cresol.events.repository.EventoRepository;
@@ -21,7 +22,11 @@ public class EventoService {
 	@Autowired
 	private EventoRepository eventoRepository;
 	
-	@Autowired InstituicaoRepository instituicaoRepository;
+	@Autowired 
+	private InstituicaoRepository instituicaoRepository;
+	
+	@Autowired
+	private EventoProducer eventoProducer;
 
 	public Evento addNewEvento(Integer instituicaoId, EventoDTO evento) {
 		Instituicao instituicao = instituicaoRepository.findById(instituicaoId)
@@ -41,7 +46,11 @@ public class EventoService {
 			instituicao
 		);
 		
-		return eventoRepository.save(newEvento);
+		Evento salvo = eventoRepository.save(newEvento);
+		
+		eventoProducer.enviarEventoParaKafka(salvo);
+		
+		return salvo;
 	}
 
 	public List<Evento> getAllEvento() {

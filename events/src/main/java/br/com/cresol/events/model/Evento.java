@@ -1,6 +1,6 @@
 package br.com.cresol.events.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,10 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name="evento")
@@ -28,10 +24,10 @@ public class Evento {
 	private String nome;
 
 	@Column(name="data_inicio", nullable = false)
-	private LocalDate dataInicial;
+	private LocalDateTime dataInicial;
 
 	@Column(name="data_final", nullable = false)
-	private LocalDate dataFinal;
+	private LocalDateTime dataFinal;
 
 	@Column(name="ativo", nullable = false)
 	private Boolean ativo;
@@ -44,8 +40,8 @@ public class Evento {
 		
 	}
 	
-	public Evento(String nome, LocalDate dataInicial, 
-			LocalDate dataFinal, Boolean ativo, Instituicao instituicaoId) {
+	public Evento(String nome, LocalDateTime dataInicial, 
+			LocalDateTime dataFinal, Boolean ativo, Instituicao instituicaoId) {
 		this.nome = nome;
 		this.dataInicial = dataInicial;
 		this.dataFinal = dataFinal;
@@ -69,19 +65,19 @@ public class Evento {
 		this.nome = nome;
 	}
 
-	public LocalDate getDataInicial() {
+	public LocalDateTime getDataInicial() {
 		return dataInicial;
 	}
 
-	public void setDataInicial(LocalDate dataInicial) {
+	public void setDataInicial(LocalDateTime dataInicial) {
 		this.dataInicial = dataInicial;
 	}
 
-	public LocalDate getDataFinal() {
+	public LocalDateTime getDataFinal() {
 		return dataFinal;
 	}
 
-	public void setDataFinal(LocalDate dataFinal) {
+	public void setDataFinal(LocalDateTime dataFinal) {
 		this.dataFinal = dataFinal;
 	}
 

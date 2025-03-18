@@ -1,6 +1,6 @@
 package br.com.cresol.events.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import br.com.cresol.events.model.Evento;
 import br.com.cresol.events.model.Instituicao;
@@ -19,11 +19,11 @@ public class EventoDTO {
 	
 	@NotNull(message="A data de início não pode ser nula")
 	@FutureOrPresent(message="A data de início deve ser maior/igual a data atual")
-	private LocalDate dataInicial;
+	private LocalDateTime dataInicial;
 	
 	@NotNull(message="A data final não pode ser nula")
 	@FutureOrPresent(message="A data final deve ser maior/igual a data atual")
-	private LocalDate dataFinal;
+	private LocalDateTime dataFinal;
 
 	private Boolean ativo;
 	private Instituicao instituicaoId;
@@ -57,19 +57,19 @@ public class EventoDTO {
 		this.nome = nome;
 	}
 
-	public LocalDate getDataInicial() {
+	public LocalDateTime getDataInicial() {
 		return dataInicial;
 	}
 
-	public void setDataInicial(LocalDate dataInicial) {
+	public void setDataInicial(LocalDateTime dataInicial) {
 		this.dataInicial = dataInicial;
 	}
 
-	public LocalDate getDataFinal() {
+	public LocalDateTime getDataFinal() {
 		return dataFinal;
 	}
 
-	public void setDataFinal(LocalDate dataFinal) {
+	public void setDataFinal(LocalDateTime dataFinal) {
 		this.dataFinal = dataFinal;
 	}
 
