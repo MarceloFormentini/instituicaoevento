@@ -28,39 +28,23 @@ public class InstituicaoController {
 
 		Instituicao instuicaoSalva = service.addNewInstituicao(novaInstituicao);
 
-		return ResponseEntity.ok(
-			new InstituicaoDTO(
-				instuicaoSalva.getId(),
-				instuicaoSalva.getNome(),
-				instuicaoSalva.getTipo()
-			)
-		);
+		return ResponseEntity.ok(new InstituicaoDTO(instuicaoSalva));
 	}
 	
 	@GetMapping("/instituicao")
 	public ResponseEntity<?> getAllInstituicao(){
 		List<Instituicao> listaInstituicoes = service.getAllInstituicao();
 	    List<InstituicaoDTO> listaDTO = listaInstituicoes.stream()
-	        .map(instituicao -> new InstituicaoDTO(
-	        	instituicao.getId(),
-	            instituicao.getNome(),
-	            instituicao.getTipo()
-	        ))
+	        .map(instituicao -> new InstituicaoDTO(instituicao))
 	        .toList();
 	    return ResponseEntity.ok(listaDTO);
 	}
 	
 	@GetMapping("/instituicao/{id}")
-	public ResponseEntity<?> getInstituicao(@Valid @PathVariable Integer id){
+	public ResponseEntity<?> getInstituicao(@PathVariable Integer id){
 		Instituicao instituicao = service.getInstituicao(id);
 
-		return ResponseEntity.ok(
-			new InstituicaoDTO(
-				instituicao.getId(),
-				instituicao.getNome(),
-				instituicao.getTipo()
-			)
-		);
+		return ResponseEntity.ok(new InstituicaoDTO(instituicao));
 	}
 	
 	 @PutMapping("/instituicao")
@@ -68,13 +52,7 @@ public class InstituicaoController {
 		 
 		 Instituicao instituicao = service.updateInstituicao(novaInstituicao);
 		 
-		 return ResponseEntity.ok(
-			new InstituicaoDTO(
-				instituicao.getId(),
-				instituicao.getNome(),
-				instituicao.getTipo()
-			)
-		);
+		 return ResponseEntity.ok(new InstituicaoDTO(instituicao));
 	 }
 
 	 @DeleteMapping("/instituicao/{id}")
