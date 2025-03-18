@@ -1,10 +1,12 @@
 package br.com.cresol.events.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.cresol.events.dto.InstituicaoDTO;
 import br.com.cresol.events.model.Instituicao;
 import br.com.cresol.events.service.InstituicaoService;
+import jakarta.validation.Valid;
 
 @RestController
 public class InstituicaoController {
@@ -23,7 +26,7 @@ public class InstituicaoController {
 	private InstituicaoService service;
 
 	@PostMapping("/instituicao")
-	public ResponseEntity<?> addNewInstituicao(@RequestBody Instituicao novaInstituicao){
+	public ResponseEntity<?> addNewInstituicao(@Valid @RequestBody Instituicao novaInstituicao){
 
 		Instituicao instuicaoSalva = service.addNewInstituicao(novaInstituicao);
 
@@ -50,16 +53,30 @@ public class InstituicaoController {
 	}
 	
 	@GetMapping("/instituicao/{id}")
-	public ResponseEntity<?> getInstituicao(@PathVariable Integer id){
+	public ResponseEntity<?> getInstituicao(@Valid @PathVariable Integer id){
 		Instituicao instituicao = service.getInstituicao(id);
 
 		return ResponseEntity.ok(
-				new InstituicaoDTO(
-					instituicao.getId(),
-					instituicao.getNome(),
-					instituicao.getTipo()
-				)
-			);
+			new InstituicaoDTO(
+				instituicao.getId(),
+				instituicao.getNome(),
+				instituicao.getTipo()
+			)
+		);
 	}
 	
+	 @PutMapping("/instituicao")
+	 public ResponseEntity<?> updateInstituicao(@Valid @RequestBody Instituicao novaInstituicao){
+		 
+		 Instituicao instituicao = service.updateInstituicao(novaInstituicao);
+		 
+		 return ResponseEntity.ok(
+			new InstituicaoDTO(
+				instituicao.getId(),
+				instituicao.getNome(),
+				instituicao.getTipo()
+			)
+		);
+	 }
+	 
 }

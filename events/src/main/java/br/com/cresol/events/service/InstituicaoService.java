@@ -44,4 +44,25 @@ public class InstituicaoService {
 		return instituicao;
 	}
 
+	public Instituicao updateInstituicao(Instituicao novaInstituicao) {
+		Instituicao instituicao = instituicaoRepository.findById(novaInstituicao.getId())
+				.orElseThrow(() -> new InstituicaoNotFoundException("Não existe instituição cadastrada com o código " + novaInstituicao.getId()));
+
+		instituicao.setNome(novaInstituicao.getNome());
+		instituicao.setTipo(novaInstituicao.getTipo());
+		
+		instituicaoRepository.findByNomeAndTipo(
+				novaInstituicao.getNome(),
+				novaInstituicao.getTipo()
+			).ifPresent(updateInstituicao -> {
+				throw new InstituicaoConflictException(
+					"Instituição " + novaInstituicao.getNome() + " - " + novaInstituicao.getTipo() + " já cadastrada."
+				);
+			});
+		
+		instituicaoRepository.save(instituicao);
+		
+		return instituicao;
+	}
+
 }
