@@ -28,6 +28,10 @@ public class EventoDTO {
 	private Boolean ativo;
 	private Instituicao instituicaoId;
 	
+	public EventoDTO() {
+		
+	}
+	
 	public EventoDTO(Evento evento) {
 		this.id = evento.getId();
 		this.nome = evento.getNome();

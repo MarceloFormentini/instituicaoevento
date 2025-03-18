@@ -55,7 +55,7 @@ public class EventoService {
 		return evento;
 	}
 
-	public Evento updateEvento(Integer instituicaoId, Evento evento) {
+	public Evento updateEvento(Integer instituicaoId, EventoDTO evento) {
 		Instituicao instituicao = instituicaoRepository.findById(instituicaoId)
 			.orElseThrow(() -> new InstituicaoNotFoundException(
 				"Não existe instituição cadastrada com o código " + instituicaoId)
@@ -76,13 +76,11 @@ public class EventoService {
 			throw new EventoDataIncorretaException("A data final deve ser maior que a data inicial");
 		}
 		
-		evento.setNome(evento.getNome());
-		evento.setDataInicial(evento.getDataInicial());
-		evento.setDataFinal(evento.getDataFinal());
-		evento.setAtivo(evento.getAtivo());
-		evento.setInstituicaoId(instituicao);
+		eventoGravado.setNome(evento.getNome());
+		eventoGravado.setDataInicial(evento.getDataInicial());
+		eventoGravado.setDataFinal(evento.getDataFinal());
 		
-		return eventoRepository.save(evento);
+		return eventoRepository.save(eventoGravado);
 	}
 
 	public boolean removeEvento(Integer id) {
