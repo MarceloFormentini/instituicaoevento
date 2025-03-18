@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -25,18 +26,22 @@ public class GlobalExceptionHandler {
 		);
 	}
 
-	// validação para instituição que já existe - valida nome e tipo
 	@ExceptionHandler(InstituicaoConflictException.class)
 	public ResponseEntity<Map<String, Object>> handleInstituicaoConflict(InstituicaoConflictException ex){
 		return ResponseEntity.status(HttpStatus.CONFLICT)
 				.body(createErrorResponse(HttpStatus.CONFLICT, ex.getMessage()));
 	}
 	
-	// validação para instituicao não encontrada
-	@ExceptionHandler(InstituicaoNotFoundException.class)
-	public ResponseEntity<Map<String, Object>> handleInstituicaoNotFound(InstituicaoNotFoundException ex){
+	@ExceptionHandler({InstituicaoNotFoundException.class, EventoNotFoundException.class})
+	public ResponseEntity<Map<String, Object>> handleNotFound(RuntimeException ex){
 		return ResponseEntity.status(HttpStatus.NOT_FOUND)
 				.body(createErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage()));
+	}
+	
+	@ExceptionHandler(EventoInstituicaoIncompativelException.class)
+	public ResponseEntity<Map<String, Object>> handleEventoInstituicaoIncompativel(EventoInstituicaoIncompativelException ex){
+		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+				.body(createErrorResponse(HttpStatus.NOT_ACCEPTABLE, ex.getMessage()));
 	}
 		
 	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -51,8 +56,17 @@ public class GlobalExceptionHandler {
 				
 		return ResponseEntity.badRequest().body(errors);
 	}
-
-	// tratamento para exceções inesperadas
+	
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<Map<String, Object>> handleMissingRequestBody(HttpMessageNotReadableException ex){
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+			.body(createErrorResponse(
+				HttpStatus.BAD_REQUEST,
+				"O corpo da requisição está ausente/inválido. Envie um JSON válido."
+			)
+		);
+	}
+	
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex){
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
