@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.cresol.events.dto.EventoDTO;
+import br.com.cresol.events.exception.EventoDataIncorretaException;
 import br.com.cresol.events.exception.EventoInstituicaoIncompativelException;
 import br.com.cresol.events.exception.EventoNotFoundException;
 import br.com.cresol.events.exception.InstituicaoNotFoundException;
@@ -21,13 +23,25 @@ public class EventoService {
 	
 	@Autowired InstituicaoRepository instituicaoRepository;
 
-	public Evento addNewEvento(Integer instituicaoId, Evento novoEvento) {
+	public Evento addNewEvento(Integer instituicaoId, EventoDTO evento) {
 		Instituicao instituicao = instituicaoRepository.findById(instituicaoId)
-				.orElseThrow(() -> new InstituicaoNotFoundException("Não existe instituição cadastrada com o código " + instituicaoId));
+			.orElseThrow(() -> new InstituicaoNotFoundException(
+				"Não existe instituição cadastrada com o código " + instituicaoId)
+			);
 		
-		novoEvento.setInstituicaoId(instituicao);
+		if (evento.getDataFinal().isBefore(evento.getDataInicial())) {
+			throw new EventoDataIncorretaException("A data final deve ser maior que a data inicial");
+		}
 		
-		return eventoRepository.save(novoEvento);
+		Evento newEvento = new Evento(
+			evento.getNome(),
+			evento.getDataInicial(), 
+			evento.getDataFinal(),
+			true,
+			instituicao
+		);
+		
+		return eventoRepository.save(newEvento);
 	}
 
 	public List<Evento> getAllEvento() {
@@ -43,13 +57,23 @@ public class EventoService {
 
 	public Evento updateEvento(Integer instituicaoId, Evento evento) {
 		Instituicao instituicao = instituicaoRepository.findById(instituicaoId)
-				.orElseThrow(() -> new InstituicaoNotFoundException("Não existe instituição cadastrada com o código " + instituicaoId));
+			.orElseThrow(() -> new InstituicaoNotFoundException(
+				"Não existe instituição cadastrada com o código " + instituicaoId)
+			);
 		
 		Evento eventoGravado = eventoRepository.findById(evento.getId())
-				.orElseThrow(() -> new EventoNotFoundException("Não existe evento cadastrado com o código " + evento.getId()));
+			.orElseThrow(() -> new EventoNotFoundException(
+				"Não existe evento cadastrado com o código " + evento.getId())
+			);
 		
 		if (!eventoGravado.getInstituicaoId().getId().equals(instituicaoId)) {
-			throw new EventoInstituicaoIncompativelException("O evento não pertence a instituição especificada");
+			throw new EventoInstituicaoIncompativelException(
+				"O evento não pertence a instituição especificada"
+			);
+		}
+		
+		if (evento.getDataFinal().isBefore(evento.getDataInicial())) {
+			throw new EventoDataIncorretaException("A data final deve ser maior que a data inicial");
 		}
 		
 		evento.setNome(evento.getNome());

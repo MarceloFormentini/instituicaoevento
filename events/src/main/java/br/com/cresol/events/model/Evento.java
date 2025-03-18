@@ -24,22 +24,15 @@ public class Evento {
 	@Column(name="id")
 	private Integer id;
 
-	@NotBlank(message="O nome não pod estar vazio")
-	@Size(min=3, message="O nome deve ter no mínimo 3 caracteres")
 	@Column(name="nome", length=255, nullable=false)
 	private String nome;
 
-	@NotNull(message="A data de início não pode ser nula")
-	@FutureOrPresent(message="A data de início deve ser maior/igual a data atual")
 	@Column(name="data_inicio", nullable = false)
 	private LocalDate dataInicial;
 
-	@NotNull(message="A data final não pode ser nula")
-	@FutureOrPresent(message="A data final deve ser maior/igual a data atual")
 	@Column(name="data_final", nullable = false)
 	private LocalDate dataFinal;
 
-	@NotNull(message="O campo 'ativo' não pode ser nulo")
 	@Column(name="ativo", nullable = false)
 	private Boolean ativo;
 
@@ -51,9 +44,8 @@ public class Evento {
 		
 	}
 	
-	public Evento(Integer id, String nome, LocalDate dataInicial, 
+	public Evento(String nome, LocalDate dataInicial, 
 			LocalDate dataFinal, Boolean ativo, Instituicao instituicaoId) {
-		this.id = id;
 		this.nome = nome;
 		this.dataInicial = dataInicial;
 		this.dataFinal = dataFinal;

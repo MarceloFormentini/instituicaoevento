@@ -38,8 +38,8 @@ public class GlobalExceptionHandler {
 				.body(createErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage()));
 	}
 	
-	@ExceptionHandler(EventoInstituicaoIncompativelException.class)
-	public ResponseEntity<Map<String, Object>> handleEventoInstituicaoIncompativel(EventoInstituicaoIncompativelException ex){
+	@ExceptionHandler({EventoInstituicaoIncompativelException.class, EventoDataIncorretaException.class})
+	public ResponseEntity<Map<String, Object>> handleEventoInstituicaoIncompativel(RuntimeException ex){
 		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
 				.body(createErrorResponse(HttpStatus.NOT_ACCEPTABLE, ex.getMessage()));
 	}

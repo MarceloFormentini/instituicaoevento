@@ -4,13 +4,27 @@ import java.time.LocalDate;
 
 import br.com.cresol.events.model.Evento;
 import br.com.cresol.events.model.Instituicao;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class EventoDTO {
 
 	private Integer id;
+	
+	@NotBlank(message="O nome não pod estar vazio")
+	@Size(min=3, message="O nome deve ter no mínimo 3 caracteres")
 	private String nome;
+	
+	@NotNull(message="A data de início não pode ser nula")
+	@FutureOrPresent(message="A data de início deve ser maior/igual a data atual")
 	private LocalDate dataInicial;
+	
+	@NotNull(message="A data final não pode ser nula")
+	@FutureOrPresent(message="A data final deve ser maior/igual a data atual")
 	private LocalDate dataFinal;
+
 	private Boolean ativo;
 	private Instituicao instituicaoId;
 	

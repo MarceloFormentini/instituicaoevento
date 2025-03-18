@@ -24,7 +24,7 @@ public class EventoController {
 	private EventoService service;
 
 	@PostMapping("/evento/{instituicaoId}")
-	public ResponseEntity<?> addNewEvento(@Valid @RequestBody Evento evento,
+	public ResponseEntity<?> addNewEvento(@Valid @RequestBody EventoDTO evento,
 			@PathVariable Integer instituicaoId) {
 		Evento eventoSalvo = service.addNewEvento(instituicaoId, evento);
 		
