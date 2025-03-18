@@ -46,7 +46,7 @@ services:
       - nlw-network
 
   app:
-    build: .
+    build: ./backend/events
     container_name: instituicao_eventos
     restart: always
     depends_on:
