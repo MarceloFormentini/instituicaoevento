@@ -1,13 +1,10 @@
 package br.com.cresol.events.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import br.com.cresol.events.dto.InstituicaoDTO;
 import br.com.cresol.events.exception.InstituicaoConflictException;
 import br.com.cresol.events.exception.InstituicaoNotFoundException;
 import br.com.cresol.events.model.Instituicao;
@@ -63,6 +60,14 @@ public class InstituicaoService {
 		instituicaoRepository.save(instituicao);
 		
 		return instituicao;
+	}
+
+	public boolean removeInstituicao(Integer id) {
+		
+		return instituicaoRepository.findById(id).map(instituicao -> {
+            instituicaoRepository.delete(instituicao);
+            return true;
+        }).orElseThrow(() -> new InstituicaoNotFoundException("Não existe instituição cadastrada com o código " + id));
 	}
 
 }

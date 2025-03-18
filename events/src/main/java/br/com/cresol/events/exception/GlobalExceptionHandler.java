@@ -48,8 +48,6 @@ public class GlobalExceptionHandler {
 		for (FieldError error: result.getFieldErrors()) {
 			errors.put(error.getField(), error.getDefaultMessage());
 		}
-		
-//		result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
 				
 		return ResponseEntity.badRequest().body(errors);
 	}
