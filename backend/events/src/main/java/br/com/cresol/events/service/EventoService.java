@@ -53,13 +53,8 @@ public class EventoService {
 		return salvo;
 	}
 
-	public List<Evento> getAllEvento() {
-		return (List<Evento>) eventoRepository.findAll();
-	}
-
-	public Evento getEvento(Integer id) {
-		Evento evento = eventoRepository.findById(id)
-				.orElseThrow(() -> new EventoNotFoundException("Não existe evento cadastrado com o código " + id));
+	public List<Evento> getEvento(Integer instituicaoId) {
+		List<Evento> evento = eventoRepository.findByInstituicaoId(instituicaoId);
 				
 		return evento;
 	}

@@ -31,21 +31,11 @@ public class EventoController {
 		return ResponseEntity.ok(new EventoDTO(eventoSalvo));
 	}
 	
-	@GetMapping("/evento")
-	public ResponseEntity<?> getAllEvento(){
-		List<Evento> listaEventos = service.getAllEvento();
-		List<EventoDTO> listaDTO = listaEventos.stream()
-			.map(evento -> new EventoDTO(evento))
-			.toList();
-		
-		return ResponseEntity.ok(listaDTO);
-	}
-	
-	@GetMapping("evento/{id}")
-	public ResponseEntity<?> getEvento(@PathVariable Integer id){
-		Evento evento = service.getEvento(id);
-		
-		return ResponseEntity.ok(new EventoDTO(evento));
+	@GetMapping("evento/{instituicaoId}")
+	public ResponseEntity<?> getEvento(@PathVariable Integer instituicaoId){
+		List<Evento> eventos = service.getEvento(instituicaoId);
+
+		return ResponseEntity.ok(eventos);
 	}
 	
 	@PutMapping("/evento/{instituicaoId}")
