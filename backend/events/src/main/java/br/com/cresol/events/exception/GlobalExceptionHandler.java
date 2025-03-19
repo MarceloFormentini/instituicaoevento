@@ -43,6 +43,12 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
 				.body(createErrorResponse(HttpStatus.NOT_ACCEPTABLE, ex.getMessage()));
 	}
+	
+	@ExceptionHandler(InstituicaoUsedException.class)
+	public ResponseEntity<Map<String, Object>> handleInstituicaoUsed(InstituicaoUsedException ex){
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(createErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage()));
+	}
 		
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -57,7 +63,7 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.badRequest().body(errors);
 	}
 	
-	@ExceptionHandler({HttpMessageNotReadableException.class, InstituicaoUsedException.class})
+	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<Map<String, Object>> handleMissingRequestBody(RuntimeException ex){
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 			.body(createErrorResponse(
