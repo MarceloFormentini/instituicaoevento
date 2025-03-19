@@ -2,6 +2,11 @@ package br.com.cresol.events.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import br.com.cresol.events.config.LocalDateTimeDeserializer;
+import br.com.cresol.events.config.LocalDateTimeSerializer;
 import br.com.cresol.events.model.Evento;
 import br.com.cresol.events.model.Instituicao;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -19,10 +24,14 @@ public class EventoDTO {
 	
 	@NotNull(message="A data de início não pode ser nula")
 	@FutureOrPresent(message="A data de início deve ser maior/igual a data atual")
+	@JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private LocalDateTime dataInicial;
 	
 	@NotNull(message="A data final não pode ser nula")
 	@FutureOrPresent(message="A data final deve ser maior/igual a data atual")
+	@JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private LocalDateTime dataFinal;
 
 	private Boolean ativo;

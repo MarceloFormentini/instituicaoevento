@@ -36,18 +36,19 @@ public class EventoController {
 		return ResponseEntity.ok(new EventoDTO(eventoSalvo));
 	}
 	
-//	@GetMapping("evento/{instituicao}")
-//	public ResponseEntity<?> getEvento(@PathVariable Integer instituicao){
-//		List<Evento> eventos = service.getEvento(instituicao);
-//
-//		return ResponseEntity.ok(eventos);
-//	}
-	
-	@GetMapping("evento/{instituicao}")
-    public ResponseEntity<Page<Evento>> getEventos(
-        @PageableDefault(size = 10, sort = "dataInicial") Pageable pageable) {
-        return ResponseEntity.ok(service.getEventos(pageable));
+	@GetMapping("/evento/{instituicao}")
+    public ResponseEntity<Page<EventoDTO>> getEventos(
+        @PageableDefault(size = 10, sort = "dataInicial") Pageable pageable,
+        @PathVariable Integer instituicao) {
+        return ResponseEntity.ok(service.getEvento(pageable, instituicao));
     }
+	
+	@GetMapping("/evento/{instituicao}/{id}")
+	public ResponseEntity<?> getEventoId(@PathVariable Integer instituicao, @PathVariable Integer id){
+		Evento evento = service.getEventoId(instituicao, id);
+		
+		return ResponseEntity.ok(new EventoDTO(evento));
+	}
 	
 	@PutMapping("/evento/{instituicao}")
 	public ResponseEntity<?> updateEvento(@Valid @RequestBody EventoDTO evento,

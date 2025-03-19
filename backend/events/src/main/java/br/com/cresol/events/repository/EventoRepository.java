@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import br.com.cresol.events.dto.EventoDTO;
 import br.com.cresol.events.model.Evento;
 
 public interface EventoRepository extends JpaRepository<Evento, Integer>{
@@ -16,7 +17,7 @@ public interface EventoRepository extends JpaRepository<Evento, Integer>{
 	public boolean testeEventoVinculado(@Param("instituicao") Integer instituicao);
 	
 	@Query("select e from Evento e where e.instituicao.id = :instituicao and e.ativo = true")
-	List<Evento> findByInstituicao(@Param("instituicao") Integer instituicao);
+	Page<Evento> findByInstituicao(@Param("instituicao") Integer instituicao, Pageable pageable);
 	
-	Page<Evento> findAll(Pageable pageable);
+//	Page<Evento> findAll(Pageable pageable);
 }

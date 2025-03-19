@@ -1,7 +1,5 @@
 package br.com.cresol.events.service;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,6 +11,7 @@ import br.com.cresol.events.exception.EventoNotFoundException;
 import br.com.cresol.events.exception.InstituicaoNotFoundException;
 import br.com.cresol.events.messaging.EventoProducer;
 import br.com.cresol.events.model.Evento;
+import br.com.cresol.events.model.Instituicao;
 import br.com.cresol.events.repository.EventoRepository;
 import br.com.cresol.events.repository.InstituicaoRepository;
 
@@ -31,38 +30,47 @@ public class EventoService {
 	}
 
 	public Evento addNewEvento(Integer instituicao, EventoDTO evento) {
-
-		if (!instituicaoRepository.existsById(instituicao)) {
-			throw new InstituicaoNotFoundException("Não existe instituição cadastrada com o código " + instituicao);
-		}
+		
+		Instituicao instituicaoGravada = instituicaoRepository.findById(instituicao)
+	 			.orElseThrow(() -> new InstituicaoNotFoundException(
+	 				"Não existe instituição cadastrada com o código " + instituicao)
+	 			);
 
 		if (evento.getDataFinal().isBefore(evento.getDataInicial())) {
 			throw new EventoDataIncorretaException("A data final deve ser maior que a data inicial");
 		}
-
+		
 		Evento newEvento = new Evento(
 			evento.getNome(),
 			evento.getDataInicial(), 
 			evento.getDataFinal(),
 			true,
-			evento.getInstituicao()
+			instituicaoGravada
 		);
 		
 		Evento salvo = eventoRepository.save(newEvento);
 
-		eventoProducer.enviarEventoParaKafka(salvo);
+//		eventoProducer.enviarEventoParaKafka(salvo);
 
 		return salvo;
 	}
 
-	public List<Evento> getEvento(Integer instituicao) {
-		List<Evento> evento = eventoRepository.findByInstituicao(instituicao);
-
-		return evento;
+	public Page<EventoDTO> getEvento(Pageable pageable, Integer instituicao) {
+		 return eventoRepository.findByInstituicao(instituicao, pageable)
+			.map(evento -> new EventoDTO(evento));
 	}
 	
-	public Page<Evento> getEventos(Pageable pageable) {
-	    return eventoRepository.findAll(pageable); // ✅ Pesquisa paginada
+	public Evento getEventoId(Integer instituicao, Integer id) {
+		if (!instituicaoRepository.existsById(instituicao)) {
+			throw new InstituicaoNotFoundException("Não existe instituição cadastrada com o código " + instituicao);
+		}
+
+		Evento evento = eventoRepository.findById(id)
+			.orElseThrow(() -> new EventoNotFoundException(
+				"Não existe evento cadastrado com o código " + id)
+			);
+		
+		return evento;
 	}
 
 	public Evento updateEvento(Integer instituicao, EventoDTO evento) {
