@@ -2,7 +2,9 @@ package br.com.cresol.events.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,28 +22,37 @@ import jakarta.validation.Valid;
 @RestController
 public class EventoController {
 
-	@Autowired
-	private EventoService service;
+	private final EventoService service;
 
-	@PostMapping("/evento/{instituicaoId}")
+	public EventoController(EventoService service) {
+		this.service = service;
+	}
+
+	@PostMapping("/evento/{instituicao}")
 	public ResponseEntity<?> addNewEvento(@Valid @RequestBody EventoDTO evento,
-			@PathVariable Integer instituicaoId) {
-		Evento eventoSalvo = service.addNewEvento(instituicaoId, evento);
+			@PathVariable Integer instituicao) {
+		Evento eventoSalvo = service.addNewEvento(instituicao, evento);
 		
 		return ResponseEntity.ok(new EventoDTO(eventoSalvo));
 	}
 	
-	@GetMapping("evento/{instituicaoId}")
-	public ResponseEntity<?> getEvento(@PathVariable Integer instituicaoId){
-		List<Evento> eventos = service.getEvento(instituicaoId);
-
-		return ResponseEntity.ok(eventos);
-	}
+//	@GetMapping("evento/{instituicao}")
+//	public ResponseEntity<?> getEvento(@PathVariable Integer instituicao){
+//		List<Evento> eventos = service.getEvento(instituicao);
+//
+//		return ResponseEntity.ok(eventos);
+//	}
 	
-	@PutMapping("/evento/{instituicaoId}")
+	@GetMapping("evento/{instituicao}")
+    public ResponseEntity<Page<Evento>> getEventos(
+        @PageableDefault(size = 10, sort = "dataInicial") Pageable pageable) {
+        return ResponseEntity.ok(service.getEventos(pageable));
+    }
+	
+	@PutMapping("/evento/{instituicao}")
 	public ResponseEntity<?> updateEvento(@Valid @RequestBody EventoDTO evento,
-			@PathVariable Integer instituicaoId){
-		Evento eventoAlterado = service.updateEvento(instituicaoId, evento);
+			@PathVariable Integer instituicao){
+		Evento eventoAlterado = service.updateEvento(instituicao, evento);
 
 		return ResponseEntity.ok(new EventoDTO(eventoAlterado));
 	}

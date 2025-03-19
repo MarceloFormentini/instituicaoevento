@@ -1,8 +1,8 @@
 package br.com.cresol.events.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,8 +20,11 @@ import jakarta.validation.Valid;
 @RestController
 public class InstituicaoController {
 
-	@Autowired
-	private InstituicaoService service;
+	private final InstituicaoService service;
+
+	public InstituicaoController(InstituicaoService service) {
+		this.service = service;
+	}
 
 	@PostMapping("/instituicao")
 	public ResponseEntity<?> addNewInstituicao(@Valid @RequestBody Instituicao novaInstituicao){
@@ -31,14 +34,21 @@ public class InstituicaoController {
 		return ResponseEntity.ok(new InstituicaoDTO(instuicaoSalva));
 	}
 	
+//	@GetMapping("/instituicao")
+//	public ResponseEntity<?> getAllInstituicao(){
+//		List<Instituicao> listaInstituicoes = service.getAllInstituicao();
+//	    List<InstituicaoDTO> listaDTO = listaInstituicoes.stream()
+//	        .map(instituicao -> new InstituicaoDTO(instituicao))
+//	        .toList();
+//	    return ResponseEntity.ok(listaDTO);
+//	}
+	
 	@GetMapping("/instituicao")
-	public ResponseEntity<?> getAllInstituicao(){
-		List<Instituicao> listaInstituicoes = service.getAllInstituicao();
-	    List<InstituicaoDTO> listaDTO = listaInstituicoes.stream()
-	        .map(instituicao -> new InstituicaoDTO(instituicao))
-	        .toList();
-	    return ResponseEntity.ok(listaDTO);
+	public ResponseEntity<Page<Instituicao>> getAllInstituicao(
+		@PageableDefault(size=10, sort="id") Pageable pageable){
+		return ResponseEntity.ok(service.getAllInstituicao(pageable));
 	}
+	
 	
 	@GetMapping("/instituicao/{id}")
 	public ResponseEntity<?> getInstituicao(@PathVariable Integer id){

@@ -26,7 +26,7 @@ public class EventoDTO {
 	private LocalDateTime dataFinal;
 
 	private Boolean ativo;
-	private Instituicao instituicaoId;
+	private Instituicao instituicao;
 	
 	public EventoDTO() {
 		
@@ -38,7 +38,7 @@ public class EventoDTO {
 		this.dataInicial = evento.getDataInicial();
 		this.dataFinal = evento.getDataFinal();
 		this.ativo = evento.getAtivo();
-		this.instituicaoId = evento.getInstituicaoId();
+		this.instituicao = evento.getInstituicao();
 	}
 
 	public Integer getId() {
@@ -81,11 +81,11 @@ public class EventoDTO {
 		this.ativo = ativo;
 	}
 
-	public Instituicao getInstituicaoId() {
-		return instituicaoId;
+	public Instituicao getInstituicao() {
+		return instituicao;
 	}
 
-	public void setInstituicaoId(Instituicao instituicaoId) {
-		this.instituicaoId = instituicaoId;
+	public void setInstituicao(Instituicao instituicao) {
+		this.instituicao = instituicao;
 	}
 }

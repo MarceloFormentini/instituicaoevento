@@ -2,6 +2,9 @@ package br.com.cresol.events.model;
 
 import java.time.LocalDateTime;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,19 +37,19 @@ public class Evento {
 
 	@ManyToOne
 	@JoinColumn(name="instituicao_id")
-	private Instituicao instituicaoId;
+	private Instituicao instituicao;
 	
 	public Evento() {
 		
 	}
 	
 	public Evento(String nome, LocalDateTime dataInicial, 
-			LocalDateTime dataFinal, Boolean ativo, Instituicao instituicaoId) {
+			LocalDateTime dataFinal, Boolean ativo, Instituicao instituicao) {
 		this.nome = nome;
 		this.dataInicial = dataInicial;
 		this.dataFinal = dataFinal;
 		this.ativo = ativo;
-		this.instituicaoId = instituicaoId;
+		this.instituicao = instituicao;
 	}
 
 	public Integer getId() {
@@ -89,12 +92,25 @@ public class Evento {
 		this.ativo = ativo;
 	}
 
-	public Instituicao getInstituicaoId() {
-		return instituicaoId;
+	public Instituicao getInstituicao() {
+		return instituicao;
 	}
 
-	public void setInstituicaoId(Instituicao instituicaoId) {
-		this.instituicaoId = instituicaoId;
+	public void setInstituicao(Instituicao instituicao) {
+		this.instituicao = instituicao;
 	}
 
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+			.append("id", id)
+			.append("nome", nome)
+			.append("dataInicial", dataInicial)
+			.append("dataFinal", dataFinal)
+			.append("ativo", ativo)
+			.append("instituicao", instituicao != null ? instituicao.getId() : "null")
+			.toString();
+	}
+
+	
 }

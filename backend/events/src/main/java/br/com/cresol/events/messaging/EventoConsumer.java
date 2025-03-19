@@ -2,7 +2,6 @@ package br.com.cresol.events.messaging;
 
 import java.time.LocalDateTime;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +11,12 @@ import br.com.cresol.events.repository.EventoRepository;
 @Service
 public class EventoConsumer {
 
-	@Autowired
-	private EventoRepository eventoRepository;
-	
+	private final EventoRepository eventoRepository;
+
+	public EventoConsumer(EventoRepository eventoRepository) {
+		this.eventoRepository = eventoRepository;
+	}
+
 	@KafkaListener(topics="eventos", groupId="grupo-eventos")
 	public void processarEvento(Evento evento) {
 		agendarDesativacao(evento);

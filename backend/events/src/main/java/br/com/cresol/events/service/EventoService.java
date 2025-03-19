@@ -2,7 +2,8 @@ package br.com.cresol.events.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.cresol.events.dto.EventoDTO;
@@ -12,87 +13,94 @@ import br.com.cresol.events.exception.EventoNotFoundException;
 import br.com.cresol.events.exception.InstituicaoNotFoundException;
 import br.com.cresol.events.messaging.EventoProducer;
 import br.com.cresol.events.model.Evento;
-import br.com.cresol.events.model.Instituicao;
 import br.com.cresol.events.repository.EventoRepository;
 import br.com.cresol.events.repository.InstituicaoRepository;
 
 @Service
 public class EventoService {
 
-	@Autowired
-	private EventoRepository eventoRepository;
-	
-	@Autowired 
-	private InstituicaoRepository instituicaoRepository;
-	
-	@Autowired
-	private EventoProducer eventoProducer;
+	private final EventoRepository eventoRepository;
+	private final InstituicaoRepository instituicaoRepository;
+	private final EventoProducer eventoProducer;
 
-	public Evento addNewEvento(Integer instituicaoId, EventoDTO evento) {
-		Instituicao instituicao = instituicaoRepository.findById(instituicaoId)
-			.orElseThrow(() -> new InstituicaoNotFoundException(
-				"Não existe instituição cadastrada com o código " + instituicaoId)
-			);
-		
+	public EventoService(EventoRepository eventoRepository, InstituicaoRepository instituicaoRepository,
+			EventoProducer eventoProducer) {
+		this.eventoRepository = eventoRepository;
+		this.instituicaoRepository = instituicaoRepository;
+		this.eventoProducer = eventoProducer;
+	}
+
+	public Evento addNewEvento(Integer instituicao, EventoDTO evento) {
+
+		if (!instituicaoRepository.existsById(instituicao)) {
+			throw new InstituicaoNotFoundException("Não existe instituição cadastrada com o código " + instituicao);
+		}
+
 		if (evento.getDataFinal().isBefore(evento.getDataInicial())) {
 			throw new EventoDataIncorretaException("A data final deve ser maior que a data inicial");
 		}
-		
+
 		Evento newEvento = new Evento(
 			evento.getNome(),
 			evento.getDataInicial(), 
 			evento.getDataFinal(),
 			true,
-			instituicao
+			evento.getInstituicao()
 		);
 		
 		Evento salvo = eventoRepository.save(newEvento);
-		
-//		eventoProducer.enviarEventoParaKafka(salvo);
-		
+
+		eventoProducer.enviarEventoParaKafka(salvo);
+
 		return salvo;
 	}
 
-	public List<Evento> getEvento(Integer instituicaoId) {
-		List<Evento> evento = eventoRepository.findByInstituicaoId(instituicaoId);
-				
+	public List<Evento> getEvento(Integer instituicao) {
+		List<Evento> evento = eventoRepository.findByInstituicao(instituicao);
+
 		return evento;
 	}
+	
+	public Page<Evento> getEventos(Pageable pageable) {
+	    return eventoRepository.findAll(pageable); // ✅ Pesquisa paginada
+	}
 
-	public Evento updateEvento(Integer instituicaoId, EventoDTO evento) {
-		Instituicao instituicao = instituicaoRepository.findById(instituicaoId)
-			.orElseThrow(() -> new InstituicaoNotFoundException(
-				"Não existe instituição cadastrada com o código " + instituicaoId)
-			);
-		
+	public Evento updateEvento(Integer instituicao, EventoDTO evento) {
+
+		if (!instituicaoRepository.existsById(instituicao)) {
+			throw new InstituicaoNotFoundException("Não existe instituição cadastrada com o código " + instituicao);
+		}
+
 		Evento eventoGravado = eventoRepository.findById(evento.getId())
 			.orElseThrow(() -> new EventoNotFoundException(
 				"Não existe evento cadastrado com o código " + evento.getId())
 			);
-		
-		if (!eventoGravado.getInstituicaoId().getId().equals(instituicaoId)) {
+
+		if (!eventoGravado.getInstituicao().getId().equals(instituicao)) {
 			throw new EventoInstituicaoIncompativelException(
 				"O evento não pertence a instituição especificada"
 			);
 		}
-		
+
 		if (evento.getDataFinal().isBefore(evento.getDataInicial())) {
 			throw new EventoDataIncorretaException("A data final deve ser maior que a data inicial");
 		}
-		
+
 		eventoGravado.setNome(evento.getNome());
 		eventoGravado.setDataInicial(evento.getDataInicial());
 		eventoGravado.setDataFinal(evento.getDataFinal());
-		
+
 		return eventoRepository.save(eventoGravado);
 	}
 
 	public boolean removeEvento(Integer id) {
-		
-		return eventoRepository.findById(id).map(evento -> {
-			eventoRepository.delete(evento);
-			return true;
-		}).orElseThrow(() -> new EventoNotFoundException("Não existe evento cadastrado com o código " + id));
+		if (!eventoRepository.existsById(id)) {
+			throw new InstituicaoNotFoundException("Não existe evento cadastrado com o código " + id);
+		}
+
+		eventoRepository.deleteById(id);
+		return true;
+
 	}
 
 }

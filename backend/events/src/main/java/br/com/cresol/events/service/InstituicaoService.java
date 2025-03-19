@@ -1,8 +1,7 @@
 package br.com.cresol.events.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.cresol.events.exception.InstituicaoConflictException;
@@ -15,11 +14,13 @@ import br.com.cresol.events.repository.InstituicaoRepository;
 @Service
 public class InstituicaoService {
 
-	@Autowired
-	private InstituicaoRepository instituicaoRepository;
-	
-	@Autowired
-	private EventoRepository eventoRepository;
+	private final InstituicaoRepository instituicaoRepository;
+	private final EventoRepository eventoRepository;
+
+	public InstituicaoService(InstituicaoRepository instituicaoRepository, EventoRepository eventoRepository) {
+		this.instituicaoRepository = instituicaoRepository;
+		this.eventoRepository = eventoRepository;
+	}
 
 	public Instituicao addNewInstituicao(Instituicao novaInstituicao) {
 
@@ -35,8 +36,12 @@ public class InstituicaoService {
 		return instituicaoRepository.save(novaInstituicao);
 	}
 
-	public List<Instituicao> getAllInstituicao() {
-		return (List<Instituicao>) instituicaoRepository.findAll();
+//	public List<Instituicao> getAllInstituicao() {
+//		return (List<Instituicao>) instituicaoRepository.findAll();
+//	}
+	
+	public Page<Instituicao> getAllInstituicao(Pageable pageable){
+		return instituicaoRepository.findAll(pageable);
 	}
 
 	public Instituicao getInstituicao(Integer id) {
@@ -68,16 +73,17 @@ public class InstituicaoService {
 	}
 
 	public boolean removeInstituicao(Integer id) {
-		Instituicao instituicao = instituicaoRepository.findById(id)
-				.orElseThrow(() -> new InstituicaoNotFoundException("Não existe instituição cadastrada com o código " + id));
+
+		if (!instituicaoRepository.existsById(id)) {
+			throw new InstituicaoNotFoundException("Não existe instituição cadastrada com o código " + id);
+		}
+
+		boolean possuiEventos = eventoRepository.testeEventoVinculado(id);
+        if (possuiEventos) {
+            throw new InstituicaoUsedException("A instituição não pode ser excluída pois possui eventos vinculados.");
+        }
 		
-		eventoRepository.findByInstituicaoId(instituicao).ifPresent(evento -> {
-			throw new InstituicaoUsedException(
-				"Instituição " + instituicao.getNome() + " - " + instituicao.getTipo() + " já cadastrada."
-			);
-		});
-		
-		instituicaoRepository.delete(instituicao);
+		instituicaoRepository.deleteById(id);
 		return true;
 	}
 
