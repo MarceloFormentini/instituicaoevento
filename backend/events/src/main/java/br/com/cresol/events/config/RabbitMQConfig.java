@@ -7,10 +7,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-	public static final String EVENTO = "evento_inativacao";
+	public static final String EVENTO_INATIVACAO_QUEUE = "evento_inativacao_queue";
 	
 	@Bean
 	public Queue eventoInativacao() {
-		return new Queue(EVENTO, true);
+		return new Queue(EVENTO_INATIVACAO_QUEUE, true);
 	}
 }

@@ -17,7 +17,7 @@ public class EventoConsumer {
 		this.eventoService = eventoService;
 	}
 
-	@RabbitListener(queues = RabbitMQConfig.EVENTO)
+	@RabbitListener(queues = RabbitMQConfig.EVENTO_INATIVACAO_QUEUE)
 	public void processarInativacaoEvento(Map<String, Object> mensagem) {
 		Integer eventoId = (Integer) mensagem.get("eventoId");
 

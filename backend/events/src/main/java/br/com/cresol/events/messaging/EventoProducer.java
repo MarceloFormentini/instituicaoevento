@@ -24,13 +24,13 @@ public class EventoProducer {
 		
 		if (delay <= 0) {
 			System.out.println("A data de fim já passou, inativando imediatamente.");
-			rabbitTemplate.convertAndSend(RabbitMQConfig.EVENTO, eventoId);
+			rabbitTemplate.convertAndSend(RabbitMQConfig.EVENTO_INATIVACAO_QUEUE, eventoId);
 			return;
 		}
 		
 		Map<String, Object> mensagem = new HashMap<>();
 		mensagem.put("eventoId", eventoId);
 		
-		rabbitTemplate.convertAndSend(RabbitMQConfig.EVENTO, mensagem);
+		rabbitTemplate.convertAndSend(RabbitMQConfig.EVENTO_INATIVACAO_QUEUE, mensagem);
 	}
 }
