@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 import br.com.cresol.events.model.Instituicao;
 
 public interface InstituicaoRepository extends CrudRepository<Instituicao, Integer>{
-	Optional<Instituicao> findByNomeAndTipo(String nome, String Tipo);
+	Optional<Instituicao> findByNomeAndTipo(String nome, String tipo);
 }
