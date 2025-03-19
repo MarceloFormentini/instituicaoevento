@@ -1,16 +1,7 @@
-# Usa uma imagem do Maven para compilar o projeto
-FROM maven:3.8.5-openjdk-17 AS build
-WORKDIR /app
-COPY . .
-RUN mvn clean package -DskipTests
+FROM postgres:14
 
-# Usa uma imagem menor do Java para rodar o JAR
-FROM openjdk:17-jdk-slim
-WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
-# Usa uma imagem base do Java
-FROM openjdk:17-jdk-slim
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=postgres
+ENV POSTGRES_DB=db_event
 
-# Expõe a porta usada pela aplicação
-EXPOSE 9090
+EXPOSE 5432

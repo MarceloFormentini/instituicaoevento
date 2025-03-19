@@ -1,45 +1,33 @@
 package br.com.cresol.events.messaging;
 
-import java.time.LocalDateTime;
+import java.util.Map;
 
-import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
-import br.com.cresol.events.model.Evento;
-import br.com.cresol.events.repository.EventoRepository;
+import br.com.cresol.events.config.RabbitMQConfig;
+import br.com.cresol.events.service.EventoService;
 
 @Service
 public class EventoConsumer {
 
-	private final EventoRepository eventoRepository;
+	private final EventoService eventoService;
 
-	public EventoConsumer(EventoRepository eventoRepository) {
-		this.eventoRepository = eventoRepository;
+	public EventoConsumer(EventoService eventoService) {
+		this.eventoService = eventoService;
 	}
 
-	@KafkaListener(topics="eventos", groupId="grupo-eventos")
-	public void processarEvento(Evento evento) {
-		agendarDesativacao(evento);
-	}
+	@RabbitListener(queues = RabbitMQConfig.EVENTO)
+	public void processarInativacaoEvento(Map<String, Object> mensagem) {
+		Integer eventoId = (Integer) mensagem.get("eventoId");
 
-	private void agendarDesativacao(Evento evento) {
-		long delay = calcularDelay(evento.getDataFinal()); 
-
-		if (delay > 0) {
-			new Thread(() -> {
-				try {
-					Thread.sleep(delay);
-					evento.setAtivo(false);
-					eventoRepository.save(evento);
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-				}
-			}).start();
+		if (eventoId == null) {
+			System.err.println("ID do evento ausente na mensagem.");
+			return;
 		}
-	}
 
-	private long calcularDelay(LocalDateTime dataFinal) {
-		LocalDateTime agora = LocalDateTime.now();
-		return dataFinal.isAfter(agora) ? java.time.Duration.between(agora, dataFinal).toMillis() : 0;
-	}
+        System.out.println("Processando inativação do evento " + eventoId);
+        eventoService.inativarEvento(eventoId);
+    }
+
 }

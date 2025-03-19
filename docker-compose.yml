@@ -7,61 +7,31 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: db_event
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
-      - nlw-network
-    # volumes:
-    #   - ./db_event.sql:/docker-entrypoint-initdb.d/db_event.sql
-    #   - ./postgres-data:/var/lib/postgresql/data
+      - app-network
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
     restart: always
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    networks:
-      - nlw-network
-
-  kafka:
-    image: confluentinc/cp-kafka:latest
-    container_name: kafka
-    restart: always
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      # KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT://localhost:9092
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     ports:
-      - "9092:9092"
-    networks:
-      - nlw-network
-
-  app:
-    build: ./backend/events
-    container_name: instituicao_eventos
-    restart: always
-    depends_on:
-      - postgres
-      - kafka
+      - "5672:5672"  # Porta para comunicação com a aplicação
+      - "15672:15672"  # Interface web do RabbitMQ
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/db_event
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    ports:
-      - "9090:9090"
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     networks:
-      - nlw-network
+      - app-network
 
 networks:
-  nlw-network:
+  app-network:
     driver: bridge
+
+volumes:
+  postgres_data:

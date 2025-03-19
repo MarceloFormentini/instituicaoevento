@@ -3,6 +3,7 @@ package br.com.cresol.events.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.cresol.events.dto.EventoDTO;
 import br.com.cresol.events.exception.EventoDataIncorretaException;
@@ -39,7 +40,18 @@ public class EventoService {
 		if (evento.getDataFinal().isBefore(evento.getDataInicial())) {
 			throw new EventoDataIncorretaException("A data final deve ser maior que a data inicial");
 		}
-		
+
+		// Verifica se já existe um evento no mesmo dia/hora
+		boolean existeConflito = eventoRepository.existsByInstituicaoAndDataInicialBetweenOrDataFinalBetween(
+			instituicaoGravada,
+			evento.getDataInicial(),
+			evento.getDataFinal()
+		);
+
+		if (existeConflito) {
+			 throw new EventoDataIncorretaException("Já existe um evento agendado para o mesmo dia e horário");
+		 }
+
 		Evento newEvento = new Evento(
 			evento.getNome(),
 			evento.getDataInicial(), 
@@ -47,12 +59,12 @@ public class EventoService {
 			true,
 			instituicaoGravada
 		);
+
+		Evento eventoSalvo = eventoRepository.save(newEvento);
 		
-		Evento salvo = eventoRepository.save(newEvento);
+//		eventoProducer.agendarInativacaoEvento(eventoSalvo.getId(), eventoSalvo.getDataFinal());
 
-//		eventoProducer.enviarEventoParaKafka(salvo);
-
-		return salvo;
+		return eventoSalvo;
 	}
 
 	public Page<EventoDTO> getEvento(Pageable pageable, Integer instituicao) {
@@ -98,7 +110,11 @@ public class EventoService {
 		eventoGravado.setDataInicial(evento.getDataInicial());
 		eventoGravado.setDataFinal(evento.getDataFinal());
 
-		return eventoRepository.save(eventoGravado);
+		Evento eventoSalvo = eventoRepository.save(eventoGravado);
+		
+		eventoProducer.agendarInativacaoEvento(eventoSalvo.getId(), eventoSalvo.getDataFinal());
+		
+		return eventoSalvo;
 	}
 
 	public boolean removeEvento(Integer id) {
@@ -109,6 +125,17 @@ public class EventoService {
 		eventoRepository.deleteById(id);
 		return true;
 
+	}
+	
+	@Transactional
+	public void inativarEvento(Integer eventoId) {
+		eventoRepository.findById(eventoId).ifPresent(
+			evento -> {
+				evento.setAtivo(false);
+				eventoRepository.save(evento);
+				System.out.println("Evento inativado: " + eventoId);
+			}
+		);
 	}
 
 }
