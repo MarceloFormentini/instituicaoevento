@@ -1,4 +1,4 @@
-/* Estilo para o container principal */
+/* Container principal */
 .container {
 	max-width: 1200px;
 	margin: 0 auto;
@@ -13,7 +13,7 @@
 	margin-bottom: 16px;
 }
 
-/* Botão para adicionar nova instituição */
+/* Botão para adicionar novo evento */
 .button-container {
 	display: flex;
 	justify-content: space-between;
@@ -35,27 +35,28 @@
 	background-color: #2563eb;
 }
 
-/* Lista de instituições */
-.institution-list {
+/* Lista de eventos */
+.event-list {
 	width: 100%;
 	border-collapse: collapse;
 	margin-top: 16px;
 }
 
-.institution-list th,
-.institution-list td {
+.event-list th,
+.event-list td {
 	border: 1px solid #ddd;
 	padding: 8px;
 	text-align: left;
 	text-align: center; /* Centraliza o texto */
 }
 
-.institution-list th {
+.event-list th {
 	background-color: #f3f4f6;
 	font-weight: bold;
+	text-align: center;
 }
 
-.institution-list tr:hover {
+.event-list tr:hover {
 	background-color: #f9fafb;
 }
 
@@ -82,15 +83,6 @@
 	background-color: #2563eb;
 }
 
-.view-button {
-	background-color: #3b82f6;
-	color: white;
-}
-
-.view-button:hover {
-	background-color: #2563eb;
-}
-
 .delete-button {
 	background-color: #3b82f6;
 	color: white;
@@ -100,15 +92,36 @@
 	background-color: #2563eb;
 }
 
+/* Botão de voltar */
+.back-button {
+	background-color: #3b82f6; /* Azul */
+	color: white;
+	padding: 8px 16px;
+	border: none;
+	border-radius: 4px;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.back-button:hover {
+	background-color: #2563eb; /* Azul mais escuro */
+}
 /* Container para o botão de voltar e a paginação */
 .pagination-container {
 	display: flex;
-	justify-content: flex-end;
+	justify-content: space-between;
 	align-items: center;
 	margin-top: 16px;
 }
 
-/* Botões de paginação */
+/* Paginação */
+.pagination {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 16px;
+}
+
 .pagination button {
 	padding: 8px 16px;
 	border: none;

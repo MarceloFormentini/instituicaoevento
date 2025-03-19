@@ -7,6 +7,7 @@ const InstitutionList = () => {
 	const [instituicoes, setInstituicoes] = useState([]);
 	const [page, setPage] = useState(0);
 	const [totalPages, setTotalPages] = useState(1);
+	const [erroCarregar, setErroCarregar] = useState(false);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -18,14 +19,18 @@ const InstitutionList = () => {
 			.then((response) => {
 				setInstituicoes(response.data.content); // content -> contém os dados da página atual
 				setTotalPages(response.data.totalPages); // totalPages -> contém o total de páginas
+				setErroCarregar(false);
 			})
 			.catch((error) => {
-				console.error("Erro ao carregar instituições:", {
-					mensagem: error.message,
-					status: error.response?.status,
-					url: error.config?.url,
-				});
-				alert("Erro ao carregar instituições.");
+				if (!erroCarregar) {
+					console.error("Erro ao carregar instituições:", {
+						mensagem: error.message,
+						status: error.response?.status,
+						url: error.config?.url,
+					});
+					alert("Erro ao carregar instituições.");
+					setErroCarregar(true);
+				}
 			});
 	}
 
@@ -36,7 +41,7 @@ const InstitutionList = () => {
 				carregarInstituicoes();
 			} catch (error) {
 				console.error("Erro ao excluir:", error);
-				alert("Erro ao excluir instituição.");
+				// alert("Erro ao excluir instituição.");
 			}
 		}
 	};
@@ -45,7 +50,7 @@ const InstitutionList = () => {
 		<div className="container">
 			<h1 className="title">Instituições</h1>
 			<div className="button-container">
-				<button className="add-button" onClick={() => navigate("/create")}>
+				<button className="add-button" onClick={() => navigate("/instituicao/create")}>
 					Nova Instituição
 				</button>
 			</div>
@@ -63,10 +68,10 @@ const InstitutionList = () => {
 							<td className="table-cell">{inst.nome}</td>
 							<td className="table-cell">{inst.tipo}</td>
 							<td className="table-cell action-buttons">
-								<button onClick={() => navigate(`/evento/${inst.id}`)} className="action-button view-button">
+								<button onClick={() => navigate(`/instituicao/${inst.id}/evento`)} className="action-button view-button">
 									Eventos
 								</button>
-								<button onClick={() => navigate(`/edit/${inst.id}`)} className="action-button edit-button">
+								<button onClick={() => navigate(`/instituicao/edit/${inst.id}`)} className="action-button edit-button">
 									Editar
 								</button>
 								<button onClick={() => handleDelete(inst.id)} className="action-button delete-button">
@@ -77,14 +82,16 @@ const InstitutionList = () => {
 					))}
 				</tbody>
 			</table>
-			<div className="pagination">
-				<button onClick={() => setPage(page - 1)} disabled={page === 0}>
-					Anterior
-				</button>
-				<span> Página {page + 1} de {totalPages} </span>
-				<button onClick={() => setPage(page + 1)} disabled={page === totalPages - 1}>
-					Próxima
-				</button>
+			<div className="pagination-container">
+				<div className="pagination">
+					<button onClick={() => setPage(page - 1)} disabled={page === 0}>
+						Anterior
+					</button>
+					<span> Página {page + 1} de {totalPages} </span>
+					<button onClick={() => setPage(page + 1)} disabled={page === totalPages - 1}>
+						Próxima
+					</button>
+				</div>
 			</div>
 		</div>
 	);

@@ -1,6 +1,9 @@
+import { useNavigate } from "react-router-dom";
 import "../styles/InstitutionForm.css";
 
 const InstitutionForm = ({ title, formData, setFormData, onSubmit, errors }) => {
+	const navigate = useNavigate();
+
 	return (
 		<div className="container">
 			<h1 className="title">{title}</h1>
@@ -25,12 +28,17 @@ const InstitutionForm = ({ title, formData, setFormData, onSubmit, errors }) => 
 					/>
 					{errors?.tipo && <p style={{ color: "red" }}>{errors.tipo}</p>} {/* Exibe erro do tipo */}
 				</div>
-				<button type="submit" className="save-button">
-					Salvar
-				</button>
+				<div className="button-container">
+					<button type="button" className="back-button" onClick={() => navigate(-1)}>
+						Voltar
+					</button>
+					<button type="submit" className="save-button">
+						Salvar
+					</button>
+				</div>
 			</form>
 		</div>
-		);
-	};
+	);
+};
 
-	export default InstitutionForm;
+export default InstitutionForm;

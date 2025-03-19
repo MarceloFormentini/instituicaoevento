@@ -20,9 +20,9 @@ export const deleteInstituicao = (id) => api.delete(`/instituicao/${id}`);
 export const getEventosByInstituicao = (instituicaoId, page = 0, size = 10, sort = "dataInicial,asc") => {
 	return api.get(`/evento/${instituicaoId}?page=${page}&size=${size}&sort=${sort}`);
 };
-export const getEventoById = (id) => api.get(`/evento/id/${id}`);
-export const createEvento = (data) => api.post("/evento", data);
-export const updateEvento = (data) => api.put("/evento", data);
+export const getEventoById = (instituicaoId, id) => api.get(`/evento/${instituicaoId}/${id}`);
+export const createEvento = (instituicaoId, data) => api.post(`/evento/${instituicaoId}`, data);
+export const updateEvento = (instituicaoId, data) => api.put(`/evento/${instituicaoId}`, data);
 export const deleteEvento = (id) => api.delete(`/evento/${id}`);
 
 export default api;

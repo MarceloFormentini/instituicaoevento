@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getEventosByInstituicao, deleteEvento } from "../services/api";
+import "../styles/EventList.css";
 
 const EventList = () => {
 	const { instituicaoId } = useParams();
@@ -33,49 +34,52 @@ const EventList = () => {
 		}
 	};
 
-	// return (
-	// 	<div>
-	// 		<h1>Eventos da Instituição</h1>
-	// 		<button onClick={() => navigate(`/instituicao/${instituicaoId}/eventos/create`)}>Novo Evento</button>
-	// 		{eventos.length === 0 ? (
-	// 			<p>Nenhum evento cadastrado para esta instituição.</p>
-	// 		) : (
-	// 			<ul>
-	// 				{eventos.map((evento) => (
-	// 					<li key={evento.id}>
-	// 					<span onClick={() => navigate(`/evento/${instituicaoId}${evento.id}`)}>
-	// 						{evento.nome} - {new Date(evento.dataInicial).toLocaleString()} até {new Date(evento.dataFinal).toLocaleString()}
-	// 					</span>
-	// 					<button onClick={() => handleDelete(evento.id)} style={{ marginLeft: "10px" }}>
-	// 						Excluir
-	// 					</button>
-	// 					</li>
-	// 				))}
-	// 			</ul>
-	// 		)}
-	// 	</div>
-	// );
 	return (
-		<div>
-			<h1>Eventos da Instituição</h1>
-			<button onClick={() => navigate(`/instituicao/${instituicaoId}/eventos/create`)}>Novo Evento</button>
-			{eventos.length === 0 ? (
-				<p>Nenhum evento cadastrado para esta instituição.</p>
-			) : (
-				<ul>
+		<div className="container">
+			<h1 className="title">Eventos da Instituição</h1>
+			<div className="button-container">
+				<button className="add-button" onClick={() => navigate(`/instituicao/${instituicaoId}/evento/create`)}>
+					Novo Evento
+				</button>
+			</div>
+			<table className="event-list">
+				<thead>
+					<tr>
+						<th>Nome</th>
+						<th>Data Inicial</th>
+						<th>Data Final</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+				<tbody>
 					{eventos.map((evento) => (
-						<li key={evento.id}>
-							{evento.nome} - {new Date(evento.dataInicial).toLocaleString()} até {new Date(evento.dataFinal).toLocaleString()}
-						</li>
-					))}
-				</ul>
-			)}
-
-			{/* Controles de Paginação */}
-			<div className="pagination">
-				<button disabled={page === 0} onClick={() => setPage(page - 1)}>⬅ Anterior</button>
-				<span>Página {page + 1} de {totalPages}</span>
-				<button disabled={page + 1 >= totalPages} onClick={() => setPage(page + 1)}>Próxima ➡</button>
+					<tr key={evento.id}>
+						<td>{evento.nome}</td>
+						<td>{evento.dataInicial}</td>
+						<td>{evento.dataFinal}</td>
+						<td>
+							<button
+							onClick={() => navigate(`/instituicao/${instituicaoId}/evento/edit/${evento.id}`)}
+							className="action-button edit-button">
+								Editar
+							</button>
+							<button onClick={() => handleDelete(evento.id)} className="action-button delete-button">
+		 						Excluir
+	 						</button>
+						</td>
+					</tr>
+				))}
+				</tbody>
+			</table>
+			<div className="pagination-container">
+				<button className="back-button" onClick={() => navigate(-1)}>
+					Voltar
+				</button>
+				<div className="pagination">
+					<button disabled={page === 0} onClick={() => setPage(page - 1)}>Anterior</button>
+					<span>Página {page + 1} de {totalPages}</span>
+					<button disabled={page + 1 >= totalPages} onClick={() => setPage(page + 1)}>Próxima</button>
+				</div>
 			</div>
 		</div>
 	);

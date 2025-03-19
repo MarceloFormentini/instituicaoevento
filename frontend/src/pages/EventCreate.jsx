@@ -5,28 +5,43 @@ import EventForm from "../components/EventForm";
 
 const EventCreate = () => {
 	const { instituicaoId } = useParams();
-	const [formData, setFormData] = useState({ nome: "", dataInicio: "", dataFim: "", instituicaoId });
+	const [formData, setFormData] = useState({ nome: "", dataInicio: "", dataFim: ""});
 	const [errors, setErrors] = useState({});
 	const navigate = useNavigate();
+
+	// Função para formatar a data antes de enviar
+	const formatDate = (date) => {
+		if (!date) return "";
+		return new Date(date).toISOString().slice(0, 19); // Converte para yyyy-MM-ddTHH:mm:ss
+	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setErrors({});
+		console.error("ID da instituição:", instituicaoId);
+
+		// Formata as datas antes de enviar
+		const eventoFormatado = {
+			...formData,
+			dataInicial: formatDate(formData.dataInicio),
+			dataFinal: formatDate(formData.dataFim),
+		};
 
 		try {
-		await createEvento(formData);
-		navigate(`/instituicao/${instituicaoId}/eventos`);
+			console.log("cadastro de evento", formData);
+			console.log("cadastro de evento formatado", eventoFormatado);
+			await createEvento(instituicaoId, eventoFormatado);
+			navigate(`/instituicao/${instituicaoId}/evento`);
 		} catch (error) {
-		if (error.response && error.response.status === 400) {
-			setErrors(error.response.data);
-		}
+			if (error.response && error.response.status === 400) {
+				setErrors(error.response.data);
+			}
 		}
 	};
 
 	return (
 		<div>
-		<h1>Cadastrar Evento</h1>
-		<EventForm formData={formData} setFormData={setFormData} onSubmit={handleSubmit} errors={errors} />
+			<EventForm title={"Cadastrar Evento"} formData={formData} setFormData={setFormData} onSubmit={handleSubmit} errors={errors} />
 		</div>
 	);
 };
