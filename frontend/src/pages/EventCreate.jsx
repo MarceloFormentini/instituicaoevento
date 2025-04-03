@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { createEvento } from "../services/api";
+import { createEvent } from "../services/api";
 import { useNavigate, useParams } from "react-router-dom";
 import EventForm from "../components/EventForm";
 
 const EventCreate = () => {
-	const { instituicaoId } = useParams();
-	const [formData, setFormData] = useState({ nome: "", dataInicial: "", dataFinal: ""});
+	const { institutionId } = useParams();
+	const [formData, setFormData] = useState({ name: "", description:"", startDate: "", endDate: ""});
 	const [errors, setErrors] = useState({});
 	const navigate = useNavigate();
 
@@ -21,22 +21,22 @@ const EventCreate = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setErrors({});
-		// console.error("ID da instituição:", instituicaoId);
+		console.error(formData);
 
 		// Formata as datas antes de enviar
-		const eventoFormatado = {
+		const eventFormatted = {
 			...formData,
-			dataInicial: formatDate(formData.dataInicial),
-			dataFinal: formatDate(formData.dataFinal),
+			startDate: formatDate(formData.startDate),
+			endDate: formatDate(formData.endDate),
 		};
 
 		try {
-			// console.log("cadastro de evento", formData);
-			// console.log("cadastro de evento formatado", eventoFormatado);
-			await createEvento(instituicaoId, eventoFormatado);
-			navigate(`/instituicao/${instituicaoId}/evento`);
+			console.error(eventFormatted);
+			await createEvent(institutionId, eventFormatted);
+			navigate(`/institution/${institutionId}/event`);
 		} catch (error) {
-			if (error.response && error.response.status === 400) {
+			console.error(error.response);
+			if (error.response && error.response.data) {
 				setErrors(error.response.data);
 			}
 		}
@@ -44,7 +44,13 @@ const EventCreate = () => {
 
 	return (
 		<div>
-			<EventForm title={"Cadastrar Evento"} formData={formData} setFormData={setFormData} onSubmit={handleSubmit} errors={errors} />
+			<EventForm
+				title={"Cadastrar Evento"}
+				formData={formData}
+				setFormData={setFormData}
+				onSubmit={handleSubmit}
+				errors={errors}
+			/>
 		</div>
 	);
 };

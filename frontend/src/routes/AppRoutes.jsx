@@ -10,17 +10,17 @@ const AppRoutes = () => (
 	<Router>
 		<Routes>
 			{/* Define a rota raiz da aplicação */}
-			<Route path="/" element={<Navigate to="/instituicao" replace />} />
+			<Route path="/" element={<Navigate to="/institution" replace />} />
 
-			{/* Instituição */}
-			<Route path="/instituicao" element={<InstitutionList />} />
-			<Route path="/instituicao/create" element={<InstitutionCreate />} />
-			<Route path="/instituicao/edit/:id" element={<InstitutionEdit />} />
+			{/* Institution */}
+			<Route path="/institution" element={<InstitutionList />} />
+			<Route path="/institution/create" element={<InstitutionCreate />} />
+			<Route path="/institution/edit/:id" element={<InstitutionEdit />} />
 			
-			{/* Evento */}
-			<Route path="/instituicao/:instituicaoId/evento" element={<EventList />} />
-			<Route path="/instituicao/:instituicaoId/evento/create" element={<EventCreate />} />
-			<Route path="/instituicao/:instituicaoId/evento/edit/:id" element={<EventEdit />} />
+			{/* Event */}
+			<Route path="/institution/:institutionId/event" element={<EventList />} />
+			<Route path="/institution/:institutionId/event/create" element={<EventCreate />} />
+			<Route path="/institution/:institutionId/event/edit/:id" element={<EventEdit />} />
 		</Routes>
 	</Router>
 );

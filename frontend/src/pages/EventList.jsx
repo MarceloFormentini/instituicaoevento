@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getEventosByInstituicao, deleteEvento } from "../services/api";
+import { getEventsByInstitution, deleteEvent } from "../services/api";
 import "../styles/EventList.css";
 
 const EventList = () => {
-	const { instituicaoId } = useParams();
-	const [eventos, setEventos] = useState([]);
+	const { institutionId } = useParams();
+	const [events, setEvents] = useState([]);
 	const [page, setPage] = useState(0);
 	const [totalPages, setTotalPages] = useState(1);
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		carregarEventos();
+		loadEvents();
 	}, [page]);
 
-	const carregarEventos = () => {
-		getEventosByInstituicao(instituicaoId, page)
+	const loadEvents = () => {
+		getEventsByInstitution(institutionId, page)
 		.then((response) => {
-			setEventos(response.data.content);
+			setEvents(response.data.content);
 			setTotalPages(response.data.totalPages);
 		})
 		.catch((error) => console.error("Erro ao buscar eventos:", error));
@@ -26,11 +26,23 @@ const EventList = () => {
 	const handleDelete = async (id) => {
 		if (window.confirm("Tem certeza que deseja excluir este evento?")) {
 		try {
-			await deleteEvento(id);
-			carregarEventos();
+			await deleteEvent(id);
+			loadEvents();
 		} catch (error) {
 			console.error("Erro ao excluir evento:", error);
 		}
+		}
+	};
+
+	const pageNext = () => {
+		if (page + 1 < totalPages) {
+			setPage((prevPage) => prevPage + 1);
+		}
+	};
+
+	const pagePrevious = () => {
+		if (page > 0) {
+			setPage((prevPage) => prevPage - 1);
 		}
 	};
 
@@ -38,7 +50,7 @@ const EventList = () => {
 		<div className="container">
 			<h1 className="title">Eventos da Instituição</h1>
 			<div className="button-container">
-				<button className="add-button" onClick={() => navigate(`/instituicao/${instituicaoId}/evento/create`)}>
+				<button className="add-button" onClick={() => navigate(`/institution/${institutionId}/event/create`)}>
 					Novo Evento
 				</button>
 			</div>
@@ -52,18 +64,18 @@ const EventList = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{eventos.map((evento) => (
-					<tr key={evento.id}>
-						<td>{evento.nome}</td>
-						<td>{evento.dataInicial}</td>
-						<td>{evento.dataFinal}</td>
+					{events.map((event) => (
+					<tr key={event.id}>
+						<td>{event.name}</td>
+						<td>{event.startDate}</td>
+						<td>{event.endDate}</td>
 						<td>
 							<button
-							onClick={() => navigate(`/instituicao/${instituicaoId}/evento/edit/${evento.id}`)}
+							onClick={() => navigate(`/institution/${institutionId}/event/edit/${event.id}`)}
 							className="action-button edit-button">
 								Editar
 							</button>
-							<button onClick={() => handleDelete(evento.id)} className="action-button delete-button">
+							<button onClick={() => handleDelete(event.id)} className="action-button delete-button">
 		 						Excluir
 	 						</button>
 						</td>
@@ -76,9 +88,13 @@ const EventList = () => {
 					Voltar
 				</button>
 				<div className="pagination">
-					<button disabled={page === 0} onClick={() => setPage(page - 1)}>Anterior</button>
+					<button disabled={page === 0} onClick={pagePrevious}>
+						Anterior
+					</button>
 					<span>Página {page + 1} de {totalPages}</span>
-					<button disabled={page + 1 >= totalPages} onClick={() => setPage(page + 1)}>Próxima</button>
+					<button disabled={page === totalPages - 1} onClick={pageNext}>
+						Próxima
+					</button>
 				</div>
 			</div>
 		</div>

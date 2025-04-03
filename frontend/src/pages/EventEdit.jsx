@@ -1,24 +1,24 @@
 import { useEffect, useState } from "react";
 import { data, useNavigate, useParams } from "react-router-dom";
-import { getEventoById, updateEvento } from "../services/api";
+import { getEventById, updateEvent } from "../services/api";
 import EventForm from "../components/EventForm";
 
 const EventEdit = () => {
-	const { instituicaoId, id } = useParams();
-	const [formData, setFormData] = useState({ id, nome: "", dataInicial: "", dataFinal: "", instituicaoId });
+	const { institutionId, id } = useParams();
+	const [formData, setFormData] = useState({ id, name: "", description: "", startDate: "", endDate: "", institutionId });
 	const [errors, setErrors] = useState({});
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		const fetchEvento = async () => {
+		const fetchEvent = async () => {
 			try{
-				const response = await getEventoById(instituicaoId, id)
-				const evento = response.data
+				const response = await getEventById(institutionId, id)
+				const event = response.data
 
 				const formattedData = {
-					...evento,
-					dataInicial: formatDateForInput(evento.dataInicial),
-					dataFinal: formatDateForInput(evento.dataFinal),
+					...event,
+					startDate: formatDateForInput(event.startDate),
+					endDate: formatDateForInput(event.endDate),
 				};
 
 				setFormData(formattedData);
@@ -27,8 +27,8 @@ const EventEdit = () => {
 				console.error("Erro ao buscar evento por id:", error);
 			}
 		};
-		fetchEvento();
-	}, [id, instituicaoId]);
+		fetchEvent();
+	}, [id, institutionId]);
 
 	const formatDateForInput = (dateString) => {
 		if (!dateString) return "";
@@ -45,12 +45,12 @@ const EventEdit = () => {
 			// envio dos dados para a API
 			const formattedData = {
 				...formData,
-				dataInicial: formData.dataInicial.replace(" ", "T") + ":00", // Converte para o formato esperado pela API
-				dataFinal: formData.dataFinal.replace(" ", "T") + ":00",
+				startDate: formData.startDate.replace(" ", "T") + ":00", // Converte para o formato esperado pela API
+				endDate: formData.endDate.replace(" ", "T") + ":00",
 			};
 
-			await updateEvento(instituicaoId, formattedData);
-			navigate(`/instituicao/${instituicaoId}/evento`);
+			await updateEvent(institutionId, formattedData);
+			navigate(`/institution/${institutionId}/event`);
 
 		} catch (error) {
 			if (error.response && error.response.status === 400) {
@@ -63,7 +63,13 @@ const EventEdit = () => {
 
 	return (
 		<div>
-			<EventForm title={"Editar Evento"} formData={formData} setFormData={setFormData} onSubmit={handleSubmit} errors={errors} />
+			<EventForm
+				title={"Editar Evento"}
+				formData={formData}
+				setFormData={setFormData}
+				onSubmit={handleSubmit}
+				errors={errors}
+			/>
 		</div>
 	);
 };

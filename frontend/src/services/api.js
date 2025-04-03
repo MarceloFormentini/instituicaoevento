@@ -7,22 +7,22 @@ const api = axios.create({
 	headers: { "Content-Type": "application/json" },
 });
 
-// INSTITUICAO
-export const getInstituicoes = (page = 0, size = 10, sort = "id") => {
-	return api.get(`/instituicao?page=${page}&size=${size}&sort=${sort}`);
+// INSTITUTION
+export const getInstitution = (page = 0, size = 10, sort = "id") => {
+	return api.get(`/institution?page=${page}&size=${size}&sort=${sort}`);
 };
-export const getInstituicaoById = (id) => api.get(`/instituicao/${id}`);
-export const createInstituicao = (data) => api.post("/instituicao", data);
-export const updateInstituicao = (data) => api.put("/instituicao", data);
-export const deleteInstituicao = (id) => api.delete(`/instituicao/${id}`);
+export const getInstitutionById = (id) => api.get(`/institution/${id}`);
+export const createInstitution = (data) => api.post("/institution", data);
+export const updateInstitution = (data) => api.put("/institution", data);
+export const deleteInstitution = (id) => api.delete(`/institution/${id}`);
 
-// EVENTO
-export const getEventosByInstituicao = (instituicaoId, page = 0, size = 10, sort = "dataInicial,asc") => {
-	return api.get(`/evento/${instituicaoId}?page=${page}&size=${size}&sort=${sort}`);
+// EVENT
+export const getEventsByInstitution = (institutionId, page = 0, size = 10, sort = "startDate,asc") => {
+	return api.get(`/event/${institutionId}?page=${page}&size=${size}&sort=${sort}`);
 };
-export const getEventoById = (instituicaoId, id) => api.get(`/evento/${instituicaoId}/${id}`);
-export const createEvento = (instituicaoId, data) => api.post(`/evento/${instituicaoId}`, data);
-export const updateEvento = (instituicaoId, data) => api.put(`/evento/${instituicaoId}`, data);
-export const deleteEvento = (id) => api.delete(`/evento/${id}`);
+export const getEventById = (institutionId, id) => api.get(`/event/${institutionId}/${id}`);
+export const createEvent = (institutionId, data) => api.post(`/event/${institutionId}`, data);
+export const updateEvent = (institutionId, data) => api.put(`/event/${institutionId}`, data);
+export const deleteEvent = (id) => api.delete(`/event/${id}`);
 
 export default api;

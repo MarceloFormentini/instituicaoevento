@@ -1,46 +1,41 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getInstituicaoById, updateInstituicao } from "../services/api";
+import { getInstitutionById, updateInstitution } from "../services/api";
 import InstitutionForm from "../components/InstitutionForm";
 
 const InstitutionEdit = () => {
 	const { id } = useParams();
-	const [formData, setFormData] = useState({ id:"", nome: "", tipo: "" });
+	const [formData, setFormData] = useState({ id:"", name: "", type: "" });
 	const [errorMessage, setErrorMessage] = useState("");
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		getInstituicaoById(id).then((response) => setFormData(response.data))
-		.catch((error) => console.log("Erro ao carregar registro: ", error));
+		getInstitutionById(id).then((response) => setFormData(response.data));
 	}, [id]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			const response = await updateInstituicao(formData);
-			console.log("Sucesso:", response.data);
+			await updateInstitution(formData);
 			navigate("/");
 		} catch (error) {
-			console.error("Erro ao atualizar:", error);
-	  
-			if (error.response) {
-				console.error("Status:", error.response.status);
-				console.error("Dados:", error.response.data);
-				console.error("Cabeçalhos:", error.response.headers);
-				setErrorMessage(`Erro: ${error.response.data.message || "Falha ao atualizar instituição."}`);
-			} else if (error.request) {
-				console.error("Sem resposta do servidor:", error.request);
-				setErrorMessage("Erro: O servidor não respondeu.");
+			if(error.response && error.response.data) {
+				setErrorMessage(error.response.data);
 			} else {
-				console.error("Erro inesperado:", error.message);
-				setErrorMessage("Erro inesperado ao tentar atualizar a instituição.");
+				setErrorMessage("Erro ao atualizar a instituição.");
 			}
 		}
 	};
 
 	return (
 		<div>
-			<InstitutionForm title={"Editar Instituição"} formData={formData} setFormData={setFormData} onSubmit={handleSubmit} />
+			<InstitutionForm
+				title={"Editar Instituição"}
+				formData={formData}
+				setFormData={setFormData}
+				onSubmit={handleSubmit}
+				errors={errorMessage}
+			/>
 		</div>
 	);
 };

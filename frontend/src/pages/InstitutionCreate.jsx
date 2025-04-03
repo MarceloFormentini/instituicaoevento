@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { createInstituicao } from "../services/api";
+import { createInstitution } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import InstitutionForm from "../components/InstitutionForm";
 
 const InstitutionCreate = () => {
-	const [formData, setFormData] = useState({ nome: "", tipo: "" });
+	const [formData, setFormData] = useState({ name: "", type: "" });
 	const [errors, setErrors] = useState({});
 	const navigate = useNavigate();
 
@@ -13,22 +13,26 @@ const InstitutionCreate = () => {
 		setErrors({});
 
 		try{
-			console.log("cadastro de instituição", formData);
-			await createInstituicao(formData)
+			await createInstitution(formData)
 			navigate("/");
 		}catch(error){
-			if (error.response && error.response.status === 400) {
+			if (error.response && error.response.data) {
 				setErrors(error.response.data);
-			}
-			else{
-				console.log("Erro inesperado", error);
+			}else{
+				setErrors("Erro ao cadastrar instituição:", error);
 			}
 		}
 	};
 
 	return (
 		<div>
-			<InstitutionForm title={"Cadastrar Instituição"} formData={formData} setFormData={setFormData} onSubmit={handleSubmit} errors={errors}/>
+			<InstitutionForm 
+				title={"Cadastrar Instituição"}
+				formData={formData}
+				setFormData={setFormData} 
+				onSubmit={handleSubmit}
+				errors={errors}
+			/>
 		</div>
 	);
 };
